@@ -1,0 +1,354 @@
+{
+  "doc_type": "pipeline",
+  "version": "3.0",
+  "json_schema": "http://api.dataplatform.ibm.com/schemas/common-pipeline/pipeline-flow/pipeline-flow-v3-schema.json",
+  "id": "elyra-auto-generated-pipeline",
+  "primary_pipeline": "primary",
+  "pipelines": [
+    {
+      "id": "primary",
+      "nodes": [
+        {
+          "id": "9c809039-2397-4ca6-a828-f2cb4b926203",
+          "type": "execution_node",
+          "op": "execute-python-node",
+          "app_data": {
+            "component_parameters": {
+              "dependencies": [
+                "SparkApplications/spark-preprocessing.yaml"
+              ],
+              "include_subdirectories": false,
+              "outputs": [],
+              "env_vars": [],
+              "kubernetes_pod_annotations": [],
+              "kubernetes_pod_labels": [],
+              "kubernetes_secrets": [],
+              "kubernetes_shared_mem_size": {},
+              "kubernetes_tolerations": [],
+              "mounted_volumes": [],
+              "filename": "02_create_spark_crd.py",
+              "runtime_image": "dksshddl/python:3.11"
+            },
+            "label": "",
+            "ui_data": {
+              "label": "02_create_spark_crd.py",
+              "image": "/user/admin/static/elyra/python.svg",
+              "x_pos": 71,
+              "y_pos": 190,
+              "description": "Run Python script"
+            }
+          },
+          "inputs": [
+            {
+              "id": "inPort",
+              "app_data": {
+                "ui_data": {
+                  "cardinality": {
+                    "min": 0,
+                    "max": -1
+                  },
+                  "label": "Input Port"
+                }
+              }
+            }
+          ],
+          "outputs": [
+            {
+              "id": "outPort",
+              "app_data": {
+                "ui_data": {
+                  "cardinality": {
+                    "min": 0,
+                    "max": -1
+                  },
+                  "label": "Output Port"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "34a75240-0f24-401e-b59c-ce3ede0120b8",
+          "type": "execution_node",
+          "op": "execute-python-node",
+          "app_data": {
+            "component_parameters": {
+              "dependencies": [],
+              "include_subdirectories": false,
+              "outputs": [],
+              "env_vars": [
+                {
+                  "env_var": "AWS_ACCESS_KEY_ID"
+                },
+                {
+                  "env_var": "AWS_SECRET_ACCESS_KEY"
+                },
+                {
+                  "env_var": "MLFLOW_S3_ENDPOINT_URL"
+                },
+                {
+                  "env_var": "MLFLOW_TRACKING_USERNAME"
+                },
+                {
+                  "env_var": "MLFLOW_TRACKING_PASSWORD"
+                }
+              ],
+              "kubernetes_pod_annotations": [],
+              "kubernetes_pod_labels": [],
+              "kubernetes_secrets": [],
+              "kubernetes_shared_mem_size": {},
+              "kubernetes_tolerations": [],
+              "mounted_volumes": [],
+              "filename": "03_learn_model.py",
+              "runtime_image": "dksshddl/python:3.11"
+            },
+            "label": "",
+            "ui_data": {
+              "label": "03_learn_model.py",
+              "image": "/user/admin/static/elyra/python.svg",
+              "x_pos": 345,
+              "y_pos": 192,
+              "description": "Run Python script"
+            }
+          },
+          "inputs": [
+            {
+              "id": "inPort",
+              "app_data": {
+                "ui_data": {
+                  "cardinality": {
+                    "min": 0,
+                    "max": -1
+                  },
+                  "label": "Input Port"
+                }
+              },
+              "links": [
+                {
+                  "id": "8caefdc4-b978-4b61-8a6c-5f660db8d465",
+                  "node_id_ref": "9c809039-2397-4ca6-a828-f2cb4b926203",
+                  "port_id_ref": "outPort"
+                }
+              ]
+            }
+          ],
+          "outputs": [
+            {
+              "id": "outPort",
+              "app_data": {
+                "ui_data": {
+                  "cardinality": {
+                    "min": 0,
+                    "max": -1
+                  },
+                  "label": "Output Port"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "062ee84a-188f-42e8-9717-1635ee863d96",
+          "type": "execution_node",
+          "op": "execute-python-node",
+          "app_data": {
+            "component_parameters": {
+              "dependencies": [
+                "Predictor/base_requirements.txt",
+                "Predictor/Dockerfile",
+                "Predictor/Predictor.py"
+              ],
+              "include_subdirectories": false,
+              "outputs": [],
+              "env_vars": [
+                {
+                  "env_var": "MLFLOW_S3_ENDPOINT_URL"
+                },
+                {
+                  "env_var": "AWS_REGION"
+                },
+                {
+                  "env_var": "MLFLOW_TRACKING_USERNAME"
+                },
+                {
+                  "env_var": "MLFLOW_TRACKING_PASSWORD"
+                },
+                {
+                  "env_var": "MODEL_NAME"
+                },
+                {
+                  "env_var": "MODEL_VERSION"
+                },
+                {
+                  "env_var": "CONTAINER_REGISTRY"
+                },
+                {
+                  "env_var": "CONTAINER_IMAGE"
+                },
+                {
+                  "env_var": "CONTAINER_TAG"
+                }
+              ],
+              "kubernetes_pod_annotations": [],
+              "kubernetes_pod_labels": [],
+              "kubernetes_secrets": [],
+              "kubernetes_shared_mem_size": {},
+              "kubernetes_tolerations": [],
+              "mounted_volumes": [],
+              "filename": "04_build_model_kaniko.py",
+              "runtime_image": "013596862746.dkr.ecr.ap-northeast-2.amazonaws.com/ml-on-eks/custom-kaniko-builder"
+            },
+            "label": "",
+            "ui_data": {
+              "label": "04_build_model_kaniko.py",
+              "image": "/user/admin/static/elyra/python.svg",
+              "x_pos": 621,
+              "y_pos": 195,
+              "description": "Run Python script"
+            }
+          },
+          "inputs": [
+            {
+              "id": "inPort",
+              "app_data": {
+                "ui_data": {
+                  "cardinality": {
+                    "min": 0,
+                    "max": -1
+                  },
+                  "label": "Input Port"
+                }
+              },
+              "links": [
+                {
+                  "id": "fe649b3e-7e14-4f50-9d9c-a023f9eeda9b",
+                  "node_id_ref": "34a75240-0f24-401e-b59c-ce3ede0120b8",
+                  "port_id_ref": "outPort"
+                }
+              ]
+            }
+          ],
+          "outputs": [
+            {
+              "id": "outPort",
+              "app_data": {
+                "ui_data": {
+                  "cardinality": {
+                    "min": 0,
+                    "max": -1
+                  },
+                  "label": "Output Port"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "90f52c9d-eb61-4ce4-ba9c-e247290a10b9",
+          "type": "execution_node",
+          "op": "execute-python-node",
+          "app_data": {
+            "component_parameters": {
+              "dependencies": [
+                "SeldonDeployment/requirements.txt",
+                "SeldonDeployment/SeldonDeploy.yaml"
+              ],
+              "include_subdirectories": false,
+              "outputs": [],
+              "env_vars": [
+                {
+                  "env_var": "EXPERIMENT_ID",
+                  "value": "Bike Rental Prediction"
+                },
+                {
+                  "env_var": "MODEL_NAME",
+                  "value": "seoulbike-rental-prediction-xgboost"
+                },
+                {
+                  "env_var": "MODEL_COORDINATES",
+                  "value": "013596862746.dkr.ecr.ap-northeast-2.amazonaws.com/mlops/basic-model"
+                },
+                {
+                  "env_var": "INGRESS_HOST",
+                  "value": "model.cjhyun.people.aws.dev"
+                }
+              ],
+              "kubernetes_pod_annotations": [],
+              "kubernetes_pod_labels": [],
+              "kubernetes_secrets": [],
+              "kubernetes_shared_mem_size": {},
+              "kubernetes_tolerations": [],
+              "mounted_volumes": [],
+              "filename": "05_deploy.py",
+              "runtime_image": "dksshddl/python:3.11"
+            },
+            "label": "",
+            "ui_data": {
+              "label": "05_deploy.py",
+              "image": "/user/admin/static/elyra/python.svg",
+              "x_pos": 869,
+              "y_pos": 193,
+              "description": "Run Python script"
+            }
+          },
+          "inputs": [
+            {
+              "id": "inPort",
+              "app_data": {
+                "ui_data": {
+                  "cardinality": {
+                    "min": 0,
+                    "max": -1
+                  },
+                  "label": "Input Port"
+                }
+              },
+              "links": [
+                {
+                  "id": "d0d81e82-db9d-4785-a9a5-dfa29e4dd7ef",
+                  "node_id_ref": "062ee84a-188f-42e8-9717-1635ee863d96",
+                  "port_id_ref": "outPort"
+                }
+              ]
+            }
+          ],
+          "outputs": [
+            {
+              "id": "outPort",
+              "app_data": {
+                "ui_data": {
+                  "cardinality": {
+                    "min": 0,
+                    "max": -1
+                  },
+                  "label": "Output Port"
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "app_data": {
+        "ui_data": {
+          "comments": []
+        },
+        "version": 8,
+        "properties": {
+          "name": "mlops",
+          "runtime": "Generic",
+          "pipeline_defaults": {
+            "kubernetes_shared_mem_size": {},
+            "kubernetes_pod_labels": [],
+            "mounted_volumes": [],
+            "kubernetes_tolerations": [],
+            "kubernetes_pod_annotations": [],
+            "kubernetes_secrets": [],
+            "env_vars": []
+          }
+        }
+      },
+      "runtime_ref": ""
+    }
+  ],
+  "schemas": []
+}
