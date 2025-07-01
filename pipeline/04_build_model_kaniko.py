@@ -68,7 +68,7 @@ def download_artifacts():
     source = model.latest_versions[0].source
     
     print("initializing connection to s3 server...")
-    minioClient = Minio(endpoint=os.environ['MLFLOW_S3_ENDPOINT_URL']
+    minioClient = Minio(endpoint=os.environ['MLFLOW_S3_ENDPOINT_URL'],
                         access_key="admin",
                         secret_key="admin123",
                         secure=False)
