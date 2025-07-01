@@ -129,7 +129,7 @@ def preprocessing(file_name):
         elif month in [6, 7, 8]:
             return 'Summer'
         else:
-            return 'Fall'
+            return 'Autumn'
 
     df_x['Seasons'] = df['dt_timestamp'].apply(get_season)
     df_x['Holiday'] = df['isHoliday']
@@ -155,9 +155,7 @@ def preprocessing(file_name):
 
     merged_df = pd.merge(df_x, df_y, on='date_hour', how='left')
 
-    merged_df = merged_df.drop(['hour', 'Date', 'date_hour', 'datetime'], axis=1).to_csv("dataset/merged.csv")
-
-    print(merged_df.head())
+    merged_df = merged_df.drop(['hour', 'Date', 'date_hour', 'datetime'], axis=1).to_csv("dataset/merged.csv", index=False)
 
     
 def new_preprocessing(file_name):
