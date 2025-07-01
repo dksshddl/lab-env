@@ -16,13 +16,16 @@ os.environ['MLFLOW_S3_ENDPOINT_URL'] = "minio.minio"
 os.environ['AWS_REGION'] = 'ap-northeast-2'
 os.environ['MLFLOW_TRACKING_USERNAME'] = 'admin'
 os.environ['MLFLOW_TRACKING_PASSWORD'] = 'admin1234567'
-os.environ["MODEL_NAME"] = "seoulbike-rental-prediction-rf"
+os.environ["MODEL_NAME"] = "best_bike_rental_model"
 os.environ["MODEL_VERSION"] = "Version 1"
 os.environ["CONTAINER_REGISTRY"] = "013596862746.dkr.ecr.ap-northeast-2.amazonaws.com"
 
 
 model_name = os.environ["MODEL_NAME"]
 model_version = os.environ["MODEL_VERSION"]
+
+mlflow.set_tracking_uri(HOST)
+
 build_name = f"seldon-model-{model_name}-v{model_version}"
 
 def init():
@@ -63,10 +66,9 @@ def download_artifacts():
 
     run_id = model.latest_versions[0].run_id
     source = model.latest_versions[0].source
-    experiment_id = "1"
     
     print("initializing connection to s3 server...")
-    minioClient = Minio(endpoint=os.environ['MLFLOW_S3_ENDPOINT_URL'],  # MinIO 서버 주소
+    minioClient = Minio(endpoint=os.environ['MLFLOW_S3_ENDPOINT_URL']
                         access_key="admin",
                         secret_key="admin123",
                         secure=False)

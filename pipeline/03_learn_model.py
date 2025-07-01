@@ -81,12 +81,10 @@ mlflow.enable_system_metrics_logging()
 
 # 모델 목록
 models = {
-    "XGBoost50": XGBRegressor(n_estimators=50, random_state=42),
-    "XGBoost100": XGBRegressor(n_estimators=100, random_state=42),
-    "XGBoost200": XGBRegressor(n_estimators=200, random_state=42),
     "RandomForest100": RandomForestRegressor(random_state=42),
     "RandomForest200": RandomForestRegressor(n_estimators=200, random_state=42),
     "RandomForest300": RandomForestRegressor(n_estimators=300, random_state=42),
+    "RandomForest350": RandomForestRegressor(n_estimators=350, random_state=42)
 }
 
 features = list(X_train.columns)
@@ -134,5 +132,27 @@ for model_name, model in models.items():
             plot_feature_importance(model_name, feature_imp, color_dict, top_n=len(features))
         
         print(f"{model_name} - MSE: {mse:.4f}, RMSE: {rmse:.4f}, R2: {r2:.4f}")
+
         
-mlflow.end_run()
+        
+client = MlflowClient(tracking_uri=HOST)
+experiment = client.get_experiment_by_name(EXPREIMENT_NAME)
+experiment_id = experiment.experiment_id
+
+runs = client.search_runs(experiment_id)
+best_run = min(runs, key=lambda run: run.data.metrics['MSE'])
+
+print(f"Best model: {best_run.data.tags['mlflow.runName']}")
+print(f"MSE: {best_run.data.metrics['MSE']:.4f}")
+print(f"RMSE: {best_run.data.metrics['RMSE']:.4f}")
+print(f"R2: {best_run.data.metrics['R2']:.4f}")
+
+model_name = "best_bike_rental_model"
+model_uri = f"runs:/{best_run.info.run_id}/model"
+try:
+    new_model_version = mlflow.register_model(model_uri, model_name)
+    print(f"New model version created: {new_model_version.version}")
+except mlflow.exceptions.RestException:
+    print(f"Model '{model_name}' already exists. Creating a new version.")
+    new_model_version = mlflow.register_model(model_uri, model_name)
+    print(f"New model version created: {new_model_version.version}")
