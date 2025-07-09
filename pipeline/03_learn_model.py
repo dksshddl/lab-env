@@ -111,7 +111,7 @@ for model_name, model in models.items():
         
         # 모델 파라미터 기록
         mlflow.log_params(model.get_params())
-        # mlflow.sklearn.log_model(sk_model=model, name=model_name)
+        mlflow.sklearn.log_model(model, name="model", input_example=X_train)
         
         importances = None
         if model_name == "RandomForest":

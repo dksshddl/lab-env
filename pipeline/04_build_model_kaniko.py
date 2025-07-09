@@ -23,9 +23,6 @@ os.environ["CONTAINER_REGISTRY"] = "013596862746.dkr.ecr.ap-northeast-2.amazonaw
 
 model_name = os.environ["MODEL_NAME"]
 model_version = os.environ["MODEL_VERSION"]
-
-mlflow.set_tracking_uri(HOST)
-
 build_name = f"seldon-model-{model_name}-v{model_version}"
 
 def init():
@@ -62,8 +59,8 @@ def download_artifacts():
     
     model = client.get_registered_model(model_name)
 
-    print(model)
-
+    print(model.latest_versions[0])
+    version = model.latest_versions[0].version
     run_id = model.latest_versions[0].run_id
     source = model.latest_versions[0].source
     
@@ -99,6 +96,6 @@ def build_push_image(repo_name):
 # login_to_ecr()
 repo_name = "mlops/basic-model"
 init()
-download_artifacts()
+# download_artifacts()
 create_ecr_repository(repo_name)
 build_push_image(repo_name)

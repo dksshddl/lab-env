@@ -203,7 +203,7 @@
               "label": "04_build_model_kaniko.py",
               "image": "/user/admin/static/elyra/python.svg",
               "x_pos": 621,
-              "y_pos": 195,
+              "y_pos": 194,
               "description": "Run Python script"
             }
           },
