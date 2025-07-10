@@ -2,3 +2,4 @@ seldon-core
 joblib
 mlflow==3.1.1
 boto3
+pandas
